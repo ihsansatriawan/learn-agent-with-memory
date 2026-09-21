@@ -33,6 +33,7 @@
     "@anvia/openai": "^1.1.5",
     "@anvia/studio": "^1.2.4",
     "@prisma/orm-postgres": "8.0.0-rc.11",
-    "dotenv": "^18.0.1"
+    "dotenv": "^18.0.1",
+    "zod": "^4.6.5"
   }
 }
