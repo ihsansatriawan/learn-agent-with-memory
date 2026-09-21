@@ -1,34 +1,19 @@
-import { Agent } from "@anvia/core";
-import { getModel } from "./models.js";
+
 import { Studio } from "@anvia/studio";
-import { BASE_INSTRUCTIONS } from "./prompts.js";
-import { memoryStore } from "./memory.js";
-import { weatherTool } from "./tools/weather.js";
-import { createSummaryMemoryCompactor } from "@anvia/core";
+import { createAgent } from "./agents.js";
+
+import { getPaymentSTatusTool, submitPaymentTool, summarizeIPLTool } from "./tools/ipl-tools.js";
+import { mockIplService } from "./services/mock-ipl-services.js";
 
 
-const model = getModel("~openai/gpt-luna-latest");
-const summaryModel = getModel("~openai/gpt-luna-latest");
+const paymentStatusTool = getPaymentSTatusTool({ service: mockIplService });
+const paymentSubmitTool = submitPaymentTool({ service: mockIplService });
+const summaryTool = summarizeIPLTool({ service: mockIplService });
 
-const memoryCompactor = createSummaryMemoryCompactor({
-  model: summaryModel
-});
 
-const agent = new Agent({
-  id: "assistant",
-  model,
-  instructions: BASE_INSTRUCTIONS,
-  tools: [weatherTool],
-  memory: {
-    store: memoryStore,
-    savePolicy: "turn",
-    compaction: {
-      compactor: memoryCompactor,
-      trigger: {
-        afterTokens: 200
-      },
-    }
-  }
+
+const agent = createAgent({
+	tools: [paymentStatusTool, paymentSubmitTool, summaryTool],
 });
 
 const studio = new Studio([agent]).start();
