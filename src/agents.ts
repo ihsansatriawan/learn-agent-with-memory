@@ -3,6 +3,10 @@ import { BASE_INSTRUCTIONS } from "./prompts.js";
 import { getModel } from "./models.js";
 import { memoryStore } from "./memory.js";
 import { createSummaryMemoryCompactor } from "@anvia/core";
+import { createLoggerObserver } from "@anvia/logger";
+import { logger } from "./logger.js";
+
+
 
 const summaryModel = getModel("~openai/gpt-luna-latest");
 
@@ -27,10 +31,13 @@ export function createAgent(options: AgentOptions = {}) {
 			compaction: {
 				compactor: memoryCompactor,
 				trigger: {
-					afterTokens: 200
+					afterTokens: 20_000,
 				},
 			}
-		}
+		},
+		observability: {
+      observers: { logger: createLoggerObserver({ logger }) },
+    },
 	})
 }
 
